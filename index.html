@@ -65,9 +65,12 @@
     <div class="well">
       <h2>BCA app</h2>
       <h5>Begin by playing the video below, then scroll down:</h5>
-      <div class="select">
-        <label for="videoSource">Video source: </label><select id="videoSource"></select>
-        <button type="button" class="btn btn-md btn-info"   onClick="window.location.reload()">Refresh Page</button>
+      <div class="form-group row">
+        <div class="col-sm-6">
+          <label for="videoSource">Select video source:</label>
+          <select class="form-control" id="videoSource"></select>
+          <!-- <button type="button" class="btn btn-md btn-info"   onClick="window.location.reload()">Refresh Page</button> -->
+        </div>
       </div>
     </div>
     
@@ -107,14 +110,6 @@
     </div>
 
     <div>
-      <h5>Capture camera photo using the Browse... button</h5>
-      <input  id="cameraInput" type="file" accept="image/*" capture>
-    </div>
-    <div>
-      <canvas id="camera"></canvas>
-    </div>
-
-    <div>
       <canvas id="c1" hidden></canvas> 
     </div>
 
@@ -147,33 +142,6 @@
 <script>
 // window.addEventListener("DOMContentLoaded", function() {
 
-  ////////// Take still image with camera //////////
-
-  var input = document.getElementById('cameraInput');     // get input element
-  input.onchange = function () {
-    var file = input.files[0];
-    drawOnCanvas(file);
-  }
-
-  function drawOnCanvas(file) {
-    var reader = new FileReader();
-    reader.onload = function (e) {
-      var dataURL = e.target.result,
-          c       = document.getElementById('camera'),
-          ctx     = c.getContext('2d'),
-          img     = new Image();
-
-      img.onload = function() {
-        c.width  = img.width;
-        c.height = img.height;
-        ctx.drawImage(img, 0, 0);
-      };
-
-      img.src = dataURL;
-    };
-
-    reader.readAsDataURL(file);
-  }
 
   var videoWidth,
       videoHeight;
@@ -192,7 +160,7 @@
 
   const video = document.getElementById('video');      
   var   mediaStream;
-  var videoSelect = document.querySelector('select#videoSource');
+  var   videoSelect = document.querySelector('select#videoSource');
   videoSelect.onchange = getCameraReady;
   // const mediaSource = new mediaSource();
   // try {
@@ -489,13 +457,13 @@ function gotDevices(deviceInfos) {
     videoSelect.removeChild(videoSelect.firstChild);                              // clear the menu
   }
 
-  for (var i = 0; i !== deviceInfos.length; ++i) {
-    var deviceInfo = deviceInfos[i];
-    var option = document.createElement('option');
-    option.value = deviceInfo.deviceId;
-    if (deviceInfo.kind === 'videoinput') {
-      option.text = deviceInfo.label || 'camera ' + (videoSelect.length + 1);  
-      videoSelect.appendChild(option);
+  for (var i = 0; i !== deviceInfos.length; ++i) {                                // for each device
+    var deviceInfo = deviceInfos[i];                                              // get the information
+    var option = document.createElement('option');                                // DOM element
+    option.value = deviceInfo.deviceId;                                           // get device ID
+    if (deviceInfo.kind === 'videoinput') {                                       // make sure it is is a video
+      option.text = deviceInfo.label || 'Video camera ' + (videoSelect.length + 1);     // use label or camera + number
+      videoSelect.appendChild(option);                                            // add the DOM element to the videoSelect menu
       videoSelect.value = option
     } else {
       console.log('Some other kind of source/device: ', deviceInfo);
